@@ -1,12 +1,19 @@
 const path = require('path');
 const express = require('express');
+const hbs = require('hbs');
 
 // EXPRESS Config
 const app = express();
+app.set('view engine', 'hbs')
+
 
 // REDERING STATIC FILES
 const publicDiretory = path.join(__dirname, './public');
+const viewsPath = path.join(__dirname, './templates/views');
+const partialsPath = path.join(__dirname, './templates/partials');
 app.use(express.static(publicDiretory));
+app.set('views', viewsPath);
+hbs.registerPartials(partialsPath);
 
 
 
@@ -18,21 +25,27 @@ const port = 5000;
 // EXPRESS ROUTING
 // 127.0.0.1:3000 
 app.get('/', (req, res) => {
-    res.send('<h1>This is the Homepage</h1>')
+    res.render('index')
 });
 
 app.get('/about', (req, res) => {
-    res.send('<h1>This is About page</h1>')
+    res.render('about')
 });
 
 app.get('/api', (req, res) => {
-    res.send({name: 'Bolanle', location: 'Nigeria'})
+    if (!req.query.search) {
+        res.send({
+            error: 'You have to put a search item 😋'
+        })
+    } else {
+        res.send({name: 'Bolanle', location: 'Nigeria'})
+
+    }
 });
 
 app.get('*', (req, res) => {
     res.send('<h1>Page not found</h1>')
 });
-
 
 
 
